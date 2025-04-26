@@ -1,0 +1,9 @@
+[versions]
+versionName = "0.1.0"
+
+[libraries]
+rhino = { group = "org.mozilla", name = "rhino", version = "1.8.0" }
+
+[plugins]
+
+[bundles]
