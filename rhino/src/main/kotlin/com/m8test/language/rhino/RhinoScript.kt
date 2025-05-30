@@ -23,7 +23,7 @@ class RhinoScript(
     language: Language,
     scriptEngine: ScriptEngine,
     scriptContext: ScriptContext,
-    scriptConfig: ScriptConfig
+    scriptConfig: ScriptConfig,
 ) : AbstractScript<ScriptConfig>(
     context = scriptContext,
     language = language,
