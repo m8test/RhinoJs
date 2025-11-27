@@ -29,11 +29,11 @@ abstract class RhinoScriptExecutor<T : ScriptConfig>(
         )
     }
 
-    override fun execute(): Any? {
-        return runCatching {
-            val context = Context.enter()
-            val scope = context.initStandardObjects(null, true)
+    protected fun <T> enterContext(action: (Context, ScriptableObject) -> T): T {
+        val context = Context.enter()
+        try {
             context.isInterpretedMode = true
+            val scope = context.initStandardObjects(null, true)
             // 添加全局变量到js中
             script.getVariables { v, c -> true }.forEach { v ->
                 addGlobalVariable(scope, v)
@@ -42,16 +42,17 @@ abstract class RhinoScriptExecutor<T : ScriptConfig>(
                 scope,
                 JavaImpl({ scope }, { script.getContext().getBindings().getPlugins() })
             )
-            execute(context, scope)
-        }.let {
-            if (it.isFailure) {
-                script.getContext().getBindings().getConsole()
-                    .error(it.exceptionOrNull()?.message ?: "no error message is null")
-                it.exceptionOrNull()?.printStackTrace()
-            }
+            return action(context, scope)
+        } catch (e: Throwable) {
+            script.getContext().getBindings().getConsole().error(e.stackTraceToString())
+            throw e
+        } finally {
             Context.exit()
-            it.getOrNull()
         }
+    }
+
+    override fun execute(): Any? {
+        return enterContext { context, scope -> execute(context, scope) }
     }
 
     override fun getScript(): Script<*> {

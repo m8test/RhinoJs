@@ -19,6 +19,6 @@
             android:value="com.m8test.language.rhino.RhinoLanguage" />
         <meta-data
             android:name="com.m8test.plugin.minRuntimeVersionName"
-            android:value="0.1.22" />
+            android:value="0.1.33" />
     </application>
 </manifest>
