@@ -42,6 +42,8 @@ abstract class RhinoScriptExecutor<T : ScriptConfig>(
                 scope,
                 JavaImpl({ scope }, { script.getContext().getBindings().getPlugins() })
             )
+            // 注入一个exports对象以适配ts生成的js代码
+            context.evaluateString(scope, "var exports = {};", "exports", 0, null)
             return action(context, scope)
         } catch (e: Throwable) {
             script.getContext().getBindings().getConsole().error(e.stackTraceToString())
